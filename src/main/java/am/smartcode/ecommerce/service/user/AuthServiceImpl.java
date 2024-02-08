@@ -1,0 +1,100 @@
+package am.smartcode.ecommerce.service.user;
+
+
+import am.smartcode.ecommerce.exception.EntityNotFoundException;
+import am.smartcode.ecommerce.exception.InvalidPasswordException;
+import am.smartcode.ecommerce.exception.UserAlreadyExistsException;
+import am.smartcode.ecommerce.exception.ValidationException;
+import am.smartcode.ecommerce.exception.VerificationException;
+import am.smartcode.ecommerce.mapper.UserMapper;
+import am.smartcode.ecommerce.model.dto.user.ChangePasswordDto;
+import am.smartcode.ecommerce.model.dto.user.CreateUserDto;
+import am.smartcode.ecommerce.model.entity.UserEntity;
+import am.smartcode.ecommerce.repository.UserRepository;
+import am.smartcode.ecommerce.service.email.EmailService;
+import am.smartcode.ecommerce.util.RandomGenerator;
+import am.smartcode.ecommerce.util.encoder.MD5Encoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service("userService")
+@RequiredArgsConstructor
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class AuthServiceImpl implements AuthService {
+
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final UserMapper userMapper;
+
+    @Override
+    @Transactional
+    public void login(String email, String password) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null) {
+            if (!user.isVerified())
+                throw new VerificationException("You must verify your account");
+            if (!user.getPassword().equals(MD5Encoder.encode(password)))
+                throw new ValidationException("Email or Password not valid");
+        } else
+            throw new ValidationException("Email or Password not valid");
+    }
+
+    @Override
+    @Transactional
+    public void register(CreateUserDto createUserDto) {
+
+        UserEntity byEmail = userRepository.findByEmail(createUserDto.getEmail());
+        if (byEmail != null)
+            throw new UserAlreadyExistsException("User with this email already exists");
+
+        UserEntity user = userMapper.toEntity(createUserDto);
+
+        String code = RandomGenerator.generateNumericString(6);
+        user.setVerified(false);
+        user.setCode(code);
+        user.setPassword(MD5Encoder.encode(user.getPassword()));
+
+        emailService.sendEmail(user.getEmail(), "Verification", "Your code is " + code);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void verify(String email, String code) {
+        UserEntity byEmail = userRepository.findByEmail(email);
+        if (!code.equals(byEmail.getCode())) {
+            throw new VerificationException("Code is incorrect");
+        }
+
+        byEmail.setVerified(true);
+        userRepository.save(byEmail);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserEntity getByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordDto changePasswordDto) {
+        Integer id = changePasswordDto.getId();
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Product with id: %d not found.", id)));
+        validate(changePasswordDto);
+        userEntity.setPassword(changePasswordDto.getNewPassword());
+        userRepository.save(userEntity);
+    }
+
+    private void validate(ChangePasswordDto changePasswordDto) {
+        if (changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword()) ||
+                !changePasswordDto.getNewPassword().equals(changePasswordDto.getNewPassword2()))
+            throw new InvalidPasswordException("Invalid password");
+    }
+}
+
