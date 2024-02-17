@@ -4,6 +4,7 @@ import am.smartcode.ecommerce.model.dto.product.CreateProductDto;
 import am.smartcode.ecommerce.model.dto.product.ProductDto;
 import am.smartcode.ecommerce.model.dto.product.ProductFilter;
 import am.smartcode.ecommerce.service.product.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDto> create(@RequestBody CreateProductDto createProductDto) {
+    public ResponseEntity<ProductDto> create(@RequestBody @Valid CreateProductDto createProductDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(createProductDto));
     }
 

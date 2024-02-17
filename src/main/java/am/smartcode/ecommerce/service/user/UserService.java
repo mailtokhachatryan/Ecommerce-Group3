@@ -1,6 +1,5 @@
 package am.smartcode.ecommerce.service.user;
 
-import am.smartcode.ecommerce.model.dto.user.CreateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UpdateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
 
@@ -8,7 +7,6 @@ import java.util.List;
 
 public interface UserService {
 
-    UserDto create(CreateUserDto user);
 
     UserDto update(UpdateUserDto updateUserDto, int id);
 

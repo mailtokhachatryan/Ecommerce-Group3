@@ -25,7 +25,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<CategoryDto> creat(@RequestBody CreateCategoryDto createCategoryDto) {
+    public ResponseEntity<CategoryDto> create(@RequestBody CreateCategoryDto createCategoryDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(createCategoryDto));
         } catch (Exception e) {

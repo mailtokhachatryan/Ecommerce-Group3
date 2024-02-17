@@ -32,8 +32,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDto create(CreateProductDto createProductDto) {
         ProductEntity entity = productMapper.toEntity(createProductDto);
-        if (true)
-            throw new RuntimeException("Erroa exel");
         CategoryEntity categoryEntity = categoryRepository.
                 findById(createProductDto.getCategoryId()).
                 orElseThrow(() -> new EntityNotFoundException(""));

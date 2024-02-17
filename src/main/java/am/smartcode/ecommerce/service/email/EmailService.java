@@ -3,6 +3,7 @@ package am.smartcode.ecommerce.service.email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
+    @Async
     public void sendEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
@@ -19,6 +21,5 @@ public class EmailService {
         message.setFrom("testfortest891@gmail.com");
         javaMailSender.send(message);
     }
-
 
 }

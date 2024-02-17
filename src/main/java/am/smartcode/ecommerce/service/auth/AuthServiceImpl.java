@@ -1,22 +1,31 @@
-package am.smartcode.ecommerce.service.user;
+package am.smartcode.ecommerce.service.auth;
 
 
+import am.smartcode.ecommerce.config.security.jwt.JwtService;
 import am.smartcode.ecommerce.exception.EntityNotFoundException;
 import am.smartcode.ecommerce.exception.InvalidPasswordException;
 import am.smartcode.ecommerce.exception.UserAlreadyExistsException;
-import am.smartcode.ecommerce.exception.ValidationException;
 import am.smartcode.ecommerce.exception.VerificationException;
 import am.smartcode.ecommerce.mapper.UserMapper;
+import am.smartcode.ecommerce.model.dto.auth.AuthenticationDto;
+import am.smartcode.ecommerce.model.dto.auth.LoginRequest;
+import am.smartcode.ecommerce.model.dto.auth.RegisterRequestDto;
+import am.smartcode.ecommerce.model.dto.auth.VerificationRequest;
 import am.smartcode.ecommerce.model.dto.user.ChangePasswordDto;
-import am.smartcode.ecommerce.model.dto.user.CreateUserDto;
+import am.smartcode.ecommerce.model.dto.user.UserDto;
 import am.smartcode.ecommerce.model.entity.UserEntity;
 import am.smartcode.ecommerce.repository.UserRepository;
+import am.smartcode.ecommerce.repository.role.RoleRepository;
 import am.smartcode.ecommerce.service.email.EmailService;
 import am.smartcode.ecommerce.util.RandomGenerator;
-import am.smartcode.ecommerce.util.encoder.MD5Encoder;
+import am.smartcode.ecommerce.util.constants.Massage;
+import am.smartcode.ecommerce.util.constants.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,45 +37,55 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final UserMapper userMapper;
+    private final AuthenticationProvider authenticationProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final RoleRepository roleRepository;
 
     @Override
     @Transactional
-    public void login(String email, String password) {
-        UserEntity user = userRepository.findByEmail(email);
-        if (user != null) {
-            if (!user.isVerified())
-                throw new VerificationException("You must verify your account");
-            if (!user.getPassword().equals(MD5Encoder.encode(password)))
-                throw new ValidationException("Email or Password not valid");
-        } else
-            throw new ValidationException("Email or Password not valid");
+    public AuthenticationDto login(LoginRequest loginRequest) {
+
+        UserEntity user = userRepository.findByEmail(loginRequest.getEmail());
+        if (!user.isVerified())
+            throw new VerificationException(Massage.VERIFICATION_ERROR);
+
+        authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(
+                loginRequest.getEmail(),
+                loginRequest.getPassword()
+        ));
+
+        String token = jwtService.generateToken(user.getEmail(), user.getId());
+
+        return new AuthenticationDto(token);
     }
 
     @Override
     @Transactional
-    public void register(CreateUserDto createUserDto) {
-
-        UserEntity byEmail = userRepository.findByEmail(createUserDto.getEmail());
+    public UserDto register(RegisterRequestDto requestDto) {
+        UserEntity byEmail = userRepository.findByEmail(requestDto.getEmail());
         if (byEmail != null)
             throw new UserAlreadyExistsException("User with this email already exists");
 
-        UserEntity user = userMapper.toEntity(createUserDto);
+        UserEntity user = userMapper.toEntity(requestDto);
 
         String code = RandomGenerator.generateNumericString(6);
         user.setVerified(false);
         user.setCode(code);
-        user.setPassword(MD5Encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(roleRepository.findByName(RoleEnum.USER));
 
         emailService.sendEmail(user.getEmail(), "Verification", "Your code is " + code);
 
         userRepository.save(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     @Transactional
-    public void verify(String email, String code) {
-        UserEntity byEmail = userRepository.findByEmail(email);
-        if (!code.equals(byEmail.getCode())) {
+    public void verify(VerificationRequest verificationRequest) {
+        UserEntity byEmail = userRepository.findByEmail(verificationRequest.getEmail());
+        if (!verificationRequest.getCode().equals(byEmail.getCode())) {
             throw new VerificationException("Code is incorrect");
         }
 
