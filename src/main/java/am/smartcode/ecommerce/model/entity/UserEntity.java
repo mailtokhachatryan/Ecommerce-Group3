@@ -47,5 +47,4 @@ public class UserEntity extends BaseEntity {
 
     @ManyToOne(optional = false)
     private RoleEntity role;
-
 }

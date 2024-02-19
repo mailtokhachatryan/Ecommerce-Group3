@@ -2,6 +2,7 @@ package am.smartcode.ecommerce.controller;
 
 import am.smartcode.ecommerce.model.dto.user.UpdateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
+import am.smartcode.ecommerce.service.admin.AdminService;
 import am.smartcode.ecommerce.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,31 +20,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminUserController {
 
-//    TODO: Replace with AdminUserService
-    private final UserService userService;
+    //    TODO: Replace with AdminUserService
+    private final AdminService adminService;
 
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+        return ResponseEntity.ok(adminService.getAll());
     }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(userService.getById(id));
+        return ResponseEntity.ok(adminService.getById(id));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> update(@RequestBody UpdateUserDto updateUserDto, @PathVariable Integer id) {
-        return ResponseEntity.ok(userService.update(updateUserDto, id));
+        return ResponseEntity.ok(adminService.update(updateUserDto, id));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        userService.delete(id);
+        adminService.delete(id);
         return ResponseEntity.ok().build();
     }
 
