@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class InitConfig {
 
+
+
     private final InitHelper initHelper;
 
     @PostConstruct
