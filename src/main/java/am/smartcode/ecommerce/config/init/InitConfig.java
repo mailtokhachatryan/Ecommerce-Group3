@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class InitConfig {
 
 
-
     private final InitHelper initHelper;
 
     @PostConstruct

@@ -26,7 +26,6 @@ public class InitHelper {
             RoleEntity admin = new RoleEntity();
             admin.setName(RoleEnum.ADMIN);
             roleRepository.save(admin);
-
         }
 
         if (!roleRepository.existsByName(RoleEnum.USER)) {
@@ -36,7 +35,7 @@ public class InitHelper {
             roleRepository.save(user);
         }
 
-        if (!userRepository.existsByEmail("admin@gmail.com")){
+        if (!userRepository.existsByEmail("admin@gmail.com")) {
             UserEntity userEntity = UserEntity.builder()
                     .name("Admin")
                     .lastname("Admin")
@@ -49,7 +48,6 @@ public class InitHelper {
 
             userRepository.save(userEntity);
         }
-
 
     }
 

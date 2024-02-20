@@ -36,13 +36,13 @@ public class CategoryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<CategoryDto>> getAll() {
         return ResponseEntity.ok(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CategoryDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.getById(id));
     }

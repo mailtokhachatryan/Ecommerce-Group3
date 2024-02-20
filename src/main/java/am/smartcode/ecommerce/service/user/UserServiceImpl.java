@@ -13,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -43,12 +41,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity Not Found")));
     }
 
-//    @Override
-//    @Transactional
-//    public List<UserDto> getAll() {
-//        return userRepository.findAll().stream().map(userMapper::toDto).toList();
-//    }
-
     @Override
     @Transactional
     public void delete(int id) {
@@ -57,12 +49,5 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Incorrect access");
         userRepository.deleteById(id);
     }
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public UserDto getByEmail(String email) {
-//        return userMapper.toDto(userRepository.findByEmail(email));
-//    }
-
 
 }

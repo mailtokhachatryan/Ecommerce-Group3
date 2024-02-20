@@ -13,6 +13,7 @@ import am.smartcode.ecommerce.model.dto.auth.RegisterRequestDto;
 import am.smartcode.ecommerce.model.dto.auth.VerificationRequest;
 import am.smartcode.ecommerce.model.dto.user.ChangePasswordDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
+import am.smartcode.ecommerce.model.entity.RoleEntity;
 import am.smartcode.ecommerce.model.entity.UserEntity;
 import am.smartcode.ecommerce.repository.UserRepository;
 import am.smartcode.ecommerce.repository.role.RoleRepository;
@@ -73,7 +74,8 @@ public class AuthServiceImpl implements AuthService {
         user.setVerified(false);
         user.setCode(code);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(roleRepository.findByName(RoleEnum.USER));
+        RoleEntity role = roleRepository.findByName(RoleEnum.USER);
+        user.setRole(role);
 
         emailService.sendEmail(user.getEmail(), "Verification", "Your code is " + code);
 
