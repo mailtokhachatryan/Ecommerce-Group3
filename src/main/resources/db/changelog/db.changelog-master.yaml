@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Aghasi
+      changes:
+        - sqlFile:
+            path: classpath:/db/changelog/V1__init.sql
+
+  - changeSet:
+      id: 2
+      author: Aghasi
+      comment: role migration
+      changes:
+        - loadData:
+            tableName: roles
+            file: classpath:/db/changelog/roles.csv

@@ -28,6 +28,7 @@ public class AdminUserController {
     public ResponseEntity<List<UserDto>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> getById(@PathVariable Integer id) {
