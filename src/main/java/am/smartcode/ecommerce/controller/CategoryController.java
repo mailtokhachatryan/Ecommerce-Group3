@@ -7,6 +7,7 @@ import am.smartcode.ecommerce.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> create(@RequestBody CreateCategoryDto createCategoryDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(createCategoryDto));
@@ -34,21 +36,25 @@ public class CategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
     public ResponseEntity<List<CategoryDto>> getAll() {
         return ResponseEntity.ok(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
     public ResponseEntity<CategoryDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.getById(id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> update(@RequestBody UpdateCategoryDto updateCategoryDto, @PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.update(updateCategoryDto, id));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         categoryService.delete(id);
         return ResponseEntity.ok().build();

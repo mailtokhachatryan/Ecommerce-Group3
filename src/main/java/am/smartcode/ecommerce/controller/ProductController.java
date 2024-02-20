@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,17 +29,20 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
     public ResponseEntity<ProductDto> create(@RequestBody @Valid CreateProductDto createProductDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(createProductDto));
     }
 
     @PostMapping("/filter")
+    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
     public ResponseEntity<List<ProductDto>> getAll(@RequestBody ProductFilter productFilter) {
 //        return new ResponseEntity<>(productService.getAll(),HttpStatus.OK);
         return ResponseEntity.ok(productService.getAll(productFilter));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole()('ADMIN', 'USER')")
     public ResponseEntity<ProductDto> getById(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getById(id));
     }

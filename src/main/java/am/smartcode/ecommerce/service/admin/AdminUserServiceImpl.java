@@ -1,4 +1,4 @@
-package am.smartcode.ecommerce.service.user;
+package am.smartcode.ecommerce.service.admin;
 
 import am.smartcode.ecommerce.exception.EntityNotFoundException;
 import am.smartcode.ecommerce.exception.ValidationException;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AdminUserServiceImpl implements AdminUserService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -25,9 +25,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UpdateUserDto updateUserDto, int id) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (id != userDetails.getId())
-            throw new ValidationException("Incorrect access");
         UserEntity userById = userRepository.findById(id).orElseThrow();
         userMapper.update(userById, updateUserDto);
         userRepository.save(userById);
@@ -37,32 +34,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDto getById(int id) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (id != userDetails.getId())
-            throw new ValidationException("Incorrect access");
         return userMapper.toDto(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity Not Found")));
     }
 
-//    @Override
-//    @Transactional
-//    public List<UserDto> getAll() {
-//        return userRepository.findAll().stream().map(userMapper::toDto).toList();
-//    }
+    @Override
+    @Transactional
+    public List<UserDto> getAll() {
+        return userRepository.findAll().stream().map(userMapper::toDto).toList();
+    }
 
     @Override
     @Transactional
     public void delete(int id) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (id != userDetails.getId())
-            throw new ValidationException("Incorrect access");
         userRepository.deleteById(id);
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public UserDto getByEmail(String email) {
-//        return userMapper.toDto(userRepository.findByEmail(email));
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getByEmail(String email) {
+        return userMapper.toDto(userRepository.findByEmail(email));
+    }
 
 
 }
