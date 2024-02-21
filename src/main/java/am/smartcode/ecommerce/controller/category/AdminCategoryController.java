@@ -1,4 +1,4 @@
-package am.smartcode.ecommerce.controller;
+package am.smartcode.ecommerce.controller.category;
 
 import am.smartcode.ecommerce.model.dto.category.CategoryDto;
 import am.smartcode.ecommerce.model.dto.category.CreateCategoryDto;
@@ -7,23 +7,19 @@ import am.smartcode.ecommerce.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/admin/categories")
 @RequiredArgsConstructor
-public class CategoryController {
+public class AdminCategoryController {
+
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryDto> create(@RequestBody CreateCategoryDto createCategoryDto) {
         try {
@@ -33,25 +29,23 @@ public class CategoryController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAll() {
-        return ResponseEntity.ok(categoryService.getAll());
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        categoryService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(categoryService.getById(id));
-    }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> update(@RequestBody UpdateCategoryDto updateCategoryDto, @PathVariable Integer id) {
         return ResponseEntity.ok(categoryService.update(updateCategoryDto, id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        categoryService.delete(id);
-        return ResponseEntity.ok().build();
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAll() {
+        return ResponseEntity.ok(categoryService.getAll());
     }
 
 

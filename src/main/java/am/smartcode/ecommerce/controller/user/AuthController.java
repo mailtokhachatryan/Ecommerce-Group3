@@ -1,4 +1,4 @@
-package am.smartcode.ecommerce.controller;
+package am.smartcode.ecommerce.controller.user;
 
 
 import am.smartcode.ecommerce.model.dto.auth.AuthenticationDto;

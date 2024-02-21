@@ -57,6 +57,4 @@ public class UserServiceImpl implements UserService {
     public UserDto getByEmail(String email) {
         return userMapper.toDto(userRepository.findByEmail(email));
     }
-
-
 }

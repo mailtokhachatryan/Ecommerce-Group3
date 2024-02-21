@@ -1,0 +1,2 @@
+id,created_at,updated_at,name,lastname,birthday,is_verified,email,password,code,role_id
+1,2024-02-21,2024-02-21,Admin,Admin,2024-02-21,true,admin@gmail.com,adminPassword,123456,1

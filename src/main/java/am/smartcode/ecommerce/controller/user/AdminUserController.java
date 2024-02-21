@@ -1,9 +1,8 @@
-package am.smartcode.ecommerce.controller;
+package am.smartcode.ecommerce.controller.user;
 
-import am.smartcode.ecommerce.model.dto.user.ChangePasswordDto;
 import am.smartcode.ecommerce.model.dto.user.UpdateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
-import am.smartcode.ecommerce.service.auth.AuthService;
+import am.smartcode.ecommerce.service.admin.AdminService;
 import am.smartcode.ecommerce.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,45 +10,39 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
-@RequestMapping("/users")
-public class UserController {
+public class AdminUserController {
+    private final AdminService adminService;
 
-    private final UserService userService;
-    private final AuthService authService;
-
-    @PostMapping("/password")
-    @PreAuthorize("hasAnyRole('USER')")
-        public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordDto changePasswordDto) {
-        authService.changePassword(changePasswordDto);
-        return ResponseEntity.ok().build();
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserDto>> getAll() {
+        return ResponseEntity.ok(adminService.getAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(userService.getById(id));
+        return ResponseEntity.ok(adminService.getById(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UserDto> update(@RequestBody UpdateUserDto updateUserDto, @PathVariable Integer id) {
-        return ResponseEntity.ok(userService.update(updateUserDto, id));
+        return ResponseEntity.ok(adminService.update(updateUserDto, id));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        userService.delete(id);
+        adminService.delete(id);
         return ResponseEntity.ok().build();
     }
 

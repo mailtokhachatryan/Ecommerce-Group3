@@ -14,3 +14,11 @@ databaseChangeLog:
         - loadData:
             tableName: roles
             file: classpath:/db/changelog/roles.csv
+
+  - changeSet:
+      id: 3
+      author: Aghasi
+      changes:
+        - loadData:
+            tableName: users
+            file: classpath:/db/changelog/users.csv
