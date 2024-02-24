@@ -2,6 +2,7 @@ package am.smartcode.ecommerce.service.auth;
 
 
 import am.smartcode.ecommerce.config.security.jwt.JwtService;
+import am.smartcode.ecommerce.event.publisher.CustomEventPublisher;
 import am.smartcode.ecommerce.exception.EntityNotFoundException;
 import am.smartcode.ecommerce.exception.InvalidPasswordException;
 import am.smartcode.ecommerce.exception.UserAlreadyExistsException;
@@ -16,7 +17,6 @@ import am.smartcode.ecommerce.model.dto.user.UserDto;
 import am.smartcode.ecommerce.model.entity.UserEntity;
 import am.smartcode.ecommerce.repository.UserRepository;
 import am.smartcode.ecommerce.repository.role.RoleRepository;
-import am.smartcode.ecommerce.service.email.EmailService;
 import am.smartcode.ecommerce.util.RandomGenerator;
 import am.smartcode.ecommerce.util.constants.Massage;
 import am.smartcode.ecommerce.util.constants.RoleEnum;
@@ -35,12 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final EmailService emailService;
     private final UserMapper userMapper;
     private final AuthenticationProvider authenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RoleRepository roleRepository;
+    private final CustomEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 loginRequest.getPassword()
         ));
 
-        String token = jwtService.generateToken(user.getEmail(), user.getId());
+        String token = jwtService.generateToken(user.getEmail(), user.getId(),user.getRole().getName().getName());
 
         return new AuthenticationDto(token);
     }
@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.findByName(RoleEnum.USER));
 
-        emailService.sendEmail(user.getEmail(), "Verification", "Your code is " + code);
+        eventPublisher.publishRegistrationEvent(user);
 
         userRepository.save(user);
         return userMapper.toDto(user);

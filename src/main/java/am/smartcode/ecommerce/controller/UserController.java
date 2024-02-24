@@ -5,6 +5,7 @@ import am.smartcode.ecommerce.model.dto.user.UpdateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
 import am.smartcode.ecommerce.service.auth.AuthService;
 import am.smartcode.ecommerce.service.user.UserService;
+import am.smartcode.ecommerce.util.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,10 +33,10 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     @PreAuthorize("hasAnyRole('USER')")
-    public ResponseEntity<UserDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(userService.getById(id));
+    public ResponseEntity<UserDto> getSelfData() {
+        return ResponseEntity.ok(userService.getById(CurrentUser.getId()));
     }
 
     @PutMapping("/{id}")

@@ -23,7 +23,7 @@ public interface CardFeign {
     @DeleteMapping("/users/{userId}")
     void deleteAllCardsByUserId(@PathVariable Integer userId);
 
-    @DeleteMapping("{id}")
-    void deleteCardByUserId(@PathVariable Integer id);
+    @DeleteMapping("/{id}/{userId}")
+    void deleteCardById(@PathVariable Integer id, @PathVariable Integer userId);
 
 }

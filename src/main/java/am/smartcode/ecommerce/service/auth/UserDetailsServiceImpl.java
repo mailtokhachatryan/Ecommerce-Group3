@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .id(userEntity.getId())
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
-                .role(userEntity.getRole().getName())
+                .role(userEntity.getRole().getName().getName())
                 .build();
     }
 

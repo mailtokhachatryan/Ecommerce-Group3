@@ -1,9 +1,9 @@
 package am.smartcode.ecommerce.controller;
 
+import am.smartcode.ecommerce.model.dto.card.CardCreateDto;
 import am.smartcode.ecommerce.model.dto.card.CardDto;
 import am.smartcode.ecommerce.service.card.CardService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,22 +23,22 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<CardDto> createCard(@RequestBody @Valid CardDto cardDto) {
-        return ResponseEntity.ok(cardService.createCard(cardDto));
+    public ResponseEntity<CardDto> createCard(@RequestBody @Valid CardCreateDto cardCreateDto) {
+        return ResponseEntity.ok(cardService.createCard(cardCreateDto));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<CardDto>> getCardsByUserId(@PathVariable Integer userId) {
-        return ResponseEntity.ok(cardService.getCardByUserId(userId));
+    @GetMapping
+    public ResponseEntity<List<CardDto>> getCards() {
+        return ResponseEntity.ok(cardService.getCards());
     }
 
-    @DeleteMapping("/users/{userId}")
-    public void deleteCardsByUserId(@PathVariable Integer userId) {
-        cardService.deleteCardsByUserId(userId);
+    @DeleteMapping
+    public void deleteCardsByUserId() {
+        cardService.deleteAllCards();
     }
 
-    @DeleteMapping("{userId}")
-    public void deleteCardByUserId(@PathVariable Integer userId) {
-        cardService.deleteCardById(userId);
+    @DeleteMapping("/{id}")
+    public void deleteCardByUserId(@PathVariable Integer id) {
+        cardService.deleteCardById(id);
     }
 }
