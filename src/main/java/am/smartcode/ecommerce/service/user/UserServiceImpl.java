@@ -1,23 +1,25 @@
 package am.smartcode.ecommerce.service.user;
 
+import am.smartcode.ecommerce.CustomAutowired;
 import am.smartcode.ecommerce.exception.EntityNotFoundException;
 import am.smartcode.ecommerce.mapper.UserMapper;
 import am.smartcode.ecommerce.model.dto.user.UpdateUserDto;
 import am.smartcode.ecommerce.model.dto.user.UserDto;
 import am.smartcode.ecommerce.model.entity.UserEntity;
 import am.smartcode.ecommerce.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    @CustomAutowired
+    private UserRepository userRepository;
+    @CustomAutowired
+    private UserMapper userMapper;
 
     @Override
     @Transactional
