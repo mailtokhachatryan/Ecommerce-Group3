@@ -17,6 +17,7 @@ import am.smartcode.ecommerce.model.dto.user.UserDto;
 import am.smartcode.ecommerce.model.entity.UserEntity;
 import am.smartcode.ecommerce.repository.UserRepository;
 import am.smartcode.ecommerce.repository.role.RoleRepository;
+import am.smartcode.ecommerce.service.action.ActionService;
 import am.smartcode.ecommerce.util.RandomGenerator;
 import am.smartcode.ecommerce.util.constants.Massage;
 import am.smartcode.ecommerce.util.constants.RoleEnum;
@@ -27,6 +28,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("userService")
@@ -41,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final RoleRepository roleRepository;
     private final CustomEventPublisher eventPublisher;
+    private final ActionService actionService;
 
     @Override
     @Transactional
@@ -76,8 +79,10 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(roleRepository.findByName(RoleEnum.USER));
 
         eventPublisher.publishRegistrationEvent(user);
-
         userRepository.save(user);
+
+        actionService.create(user.getId(), "CREATE", "USER");
+
         return userMapper.toDto(user);
     }
 

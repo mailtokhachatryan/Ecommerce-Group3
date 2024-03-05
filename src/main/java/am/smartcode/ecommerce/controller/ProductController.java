@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-
-//@Controller
-//@ResponseBody
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
@@ -42,6 +39,4 @@ public class ProductController {
     public ResponseEntity<ProductDto> getById(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getById(id));
     }
-
-
 }

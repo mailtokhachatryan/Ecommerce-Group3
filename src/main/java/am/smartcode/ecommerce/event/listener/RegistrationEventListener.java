@@ -1,7 +1,8 @@
 package am.smartcode.ecommerce.event.listener;
 
 import am.smartcode.ecommerce.event.RegistrationEvent;
-import am.smartcode.ecommerce.service.email.EmailService;
+import am.smartcode.ecommerce.feign.EmailFeign;
+import am.smartcode.ecommerce.model.dto.email.SendEmailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -13,13 +14,19 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class RegistrationEventListener {
 
-    private final EmailService emailService;
+    private final EmailFeign emailFeign;
 
     @Async
     @TransactionalEventListener
     public void handleRegistrationEvent(RegistrationEvent registrationEvent) {
         log.info(registrationEvent.toString());
-        emailService.sendEmail(registrationEvent.getEmail(), "Verification", "Your code is " + registrationEvent.getCode());
+        emailFeign.sendEmail(
+                new SendEmailDto(
+                        registrationEvent.getEmail(),
+                        "Verification",
+                        "Your code is " + registrationEvent.getCode()
+                ))
+        ;
     }
 
 }
