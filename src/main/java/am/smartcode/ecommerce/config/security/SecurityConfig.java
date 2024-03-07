@@ -31,6 +31,7 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/auth/login",
             "/auth/register",
+            "/categories",
             "/auth/verify"
     };
 

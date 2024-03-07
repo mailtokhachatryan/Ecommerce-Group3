@@ -10,6 +10,7 @@ import am.smartcode.ecommerce.repository.CategoryRepository;
 import am.smartcode.ecommerce.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +23,28 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+//    private Map<String, Object> cache = new HashMap<>();
 
     @Override
     @Transactional
     public CategoryDto create(CreateCategoryDto createCategoryDto) {
         CategoryEntity entity = categoryMapper.toEntity(createCategoryDto);
         categoryRepository.save(entity);
+//        cache.remove("categories");
         return categoryMapper.toDto(entity);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("categories")
     public List<CategoryDto> getAll() {
-        return categoryRepository.findAll().stream().map(categoryMapper::toDto).toList();
+//        if (cache.containsKey("categories")){
+//            return (List<CategoryDto>) cache.get("categories");
+//        }
+        List<CategoryDto> list = categoryRepository.findAll().stream().map(categoryMapper::toDto).toList();
+        System.out.println("Mav Db");
+//        cache.put("categories", list);
+        return list;
     }
 
     @Override
