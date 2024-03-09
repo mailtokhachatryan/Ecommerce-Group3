@@ -13,4 +13,6 @@ public interface BasketRepository extends JpaRepository<BasketEntity, Integer> {
     void deleteAllByUser(UserEntity user);
 
     void deleteByProduct(ProductEntity productEntity);
+
+    void deleteByIdAndUserId(Integer productId,Integer userId);
 }

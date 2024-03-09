@@ -1,7 +1,7 @@
 package am.smartcode.ecommerce.model.dto.basket;
 
-import am.smartcode.ecommerce.model.entity.ProductEntity;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,10 @@ import lombok.Setter;
 public class BasketCreatDto {
 
     @NotNull
-    private ProductEntity product;
+    @Positive
+    private Integer productId;
+
     @NotNull
+    @Positive
     private Integer quantity;
 }

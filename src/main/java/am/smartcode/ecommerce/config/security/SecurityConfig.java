@@ -32,11 +32,13 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/register",
             "/categories",
+            "/products/**",
             "/auth/verify"
     };
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
+    private final RestEntryPoint restEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,7 +53,8 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(eH -> eH.authenticationEntryPoint(restEntryPoint));
         return http.build();
     }
 
@@ -81,5 +84,6 @@ public class SecurityConfig {
                         .termsOfService("Support link")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
+
 
 }
