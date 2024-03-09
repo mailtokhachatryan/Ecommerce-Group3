@@ -15,7 +15,7 @@ public class CardPayment implements PaymentStrategy {
     public String pay(BigDecimal amount) {
         return new StringBuilder()
                 .append("Payment type is:")
-                .append(paymentType.toString())
+                .append(paymentType)
                 .append(" and total amount is ")
                 .append(amount.toString()).toString();
     }

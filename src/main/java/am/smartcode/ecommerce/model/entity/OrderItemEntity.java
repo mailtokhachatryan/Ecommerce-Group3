@@ -1,11 +1,14 @@
 package am.smartcode.ecommerce.model.entity;
 
+import am.smartcode.ecommerce.model.dto.product.ProductDetails;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 
@@ -24,7 +27,8 @@ public class OrderItemEntity extends BaseEntity {
     @ManyToOne(optional = false)
     private OrderEntity order;
 
-    @ManyToOne(optional = false)
-    private ProductEntity product;
+    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    private ProductDetails productDetails;
 
 }

@@ -11,6 +11,8 @@ import org.mapstruct.MappingTarget;
 public interface CategoryMapper {
     CategoryEntity toEntity(CreateCategoryDto createCategoryDto);
 
+
+
     CategoryDto toDto(CategoryEntity categoryEntity);
 
     void update(@MappingTarget CategoryEntity categoryEntity, UpdateCategoryDto updateCategoryDto);

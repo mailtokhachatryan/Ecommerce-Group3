@@ -24,7 +24,7 @@ public class OrderEntity extends BaseEntity {
     @ManyToOne(optional = false)
     private UserEntity user;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private List<OrderItemEntity> orderItems;
 
 }
